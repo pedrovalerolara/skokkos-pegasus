@@ -2471,35 +2471,42 @@ void set_arch( double operations )
   double time_gpu;
   double latency_gpu;
 
+  
   // ExCL equinox
   // Single precision
   // Intel(R) Xeon(R) CPU E5-2698 v4 @ 2.20GHz
-  time_cpu = operations / ( 1408.0 * (double) GIGA_COMP );
+  //time_cpu = operations / ( 1408.0 * (double) GIGA_COMP );
   // PCIe 3.0
-  latency_gpu = 4096.0 / ( 15.754 * (double) GIGA_MEM );
+  //latency_gpu = 4096.0 / ( 15.754 * (double) GIGA_MEM );
   // NVIDIA V100 GPU
-  time_gpu = ( operations / ( 14028.0 * (double) GIGA_COMP ) ) + latency_gpu;
-
+  //time_gpu = ( operations / ( 14028.0 * (double) GIGA_COMP ) ) + latency_gpu;
   // ExCL Zenith
-  // Single precision
+  // Double precision
   // AMD Ryzen Threadripper 3970X 32-Core https://en.wikichip.org/wiki/amd/microarchitectures/zen_2
   //time_cpu = operations / ( 2252.0 * (double) GIGA_COMP );
   // PCIe 4.0
   //latency_gpu = 4096.0 / ( 31.508 * (double) GIGA_MEM );
-  // NVIDIA GeForce RTX 3090 GPU
+  // NVIDIA V100 GPU
   //time_gpu = ( operations / ( 35580.0 * (double) GIGA_COMP ) ) + latency_gpu;
+  // Pegasus
+  // Single precision
+  // Intel(R) Xeon(R) Platinum 8468 (2.1GHz/48 Core)
+  time_cpu = operations / ( 3225.6 * (double) GIGA_COMP );
+  // PCIe 5.0
+  latency_gpu = 4096.0 / ( 63.015 * (double) GIGA_MEM );
+  // NVIDIA H100
+  time_gpu = ( operations / ( 51200.0 * (double) GIGA_COMP ) ) + latency_gpu;
 
-  printf("Time CPU = %e, Time GPU = %e ->> Latency GPU = %e\n", time_cpu, time_gpu, latency_gpu);
+  //printf("Time CPU = %e, Time GPU = %e ->> Latency GPU = %e\n", time_cpu, time_gpu, latency_gpu);
 
+  
   if ( time_cpu <= time_gpu )
   {
     acc_set_device_type(acc_device_host);
-    printf("CPU\n");
   }
   else
   {
     acc_set_device_type(acc_device_nvidia);
-    printf("GPU\n");
   }
 }
 
@@ -2521,9 +2528,6 @@ void set_arch_reduce( double operations )
   //latency_gpu = 4096.0 / ( 15.754 * (double) GIGA_MEM );
   //time_gpu = ( operations / ( 14028.0 * (double) GIGA_COMP ) ) + latency_gpu + ( operations / 84.0 ) / ( ( 14028.0 ) * (double) GIGA_COMP );
 
-
-  
-  
   // ExCL equinox
   // Single precision
   //Intel(R) Xeon(R) CPU E5-2698 v4 @ 2.20GHz --> 20 cores
@@ -2531,19 +2535,27 @@ void set_arch_reduce( double operations )
   // PCIe 3.0
   //latency_gpu = 4096.0 / ( 15.754 * (double) GIGA_MEM );
   // NVIDIA V100 GPU
-  //time_gpu = ( operations / ( 14028.0 * (double) GIGA_COMP ) ) + ( 2.0 * latency_gpu ) + ( operations / 84.0 ) / ( ( 14028.0 / 84.0 ) * (double) GIGA_COMP );
+  //time_gpu = ( operations / ( 14028.0 * (double) GIGA_COMP ) ) + latency_gpu + ( operations / 84.0 ) / ( ( 14028.0 / 84.0 ) * (double) GIGA_COMP );
+  //printf("Time CPU = %e, Time GPU = %e ->> Latency GPU = %e\n", time_cpu, time_gpu, latency_gpu);
 
   // ExCL Zenith
   // Single precision
   // AMD Ryzen Threadripper 3970X 32-Core https://en.wikichip.org/wiki/amd/microarchitectures/zen_2
-  time_cpu = operations / ( 2252.0 * (double) GIGA_COMP ) + ( operations / 32.0 ) / ( ( 2252.0 / 32.0 ) * (double) GIGA_COMP );
+  //time_cpu = operations / ( 2252.0 * (double) GIGA_COMP ) + ( operations / 32.0 ) / ( ( 2252.0 / 32.0 ) * (double) GIGA_COMP );
   // PCIe 4.0
-  latency_gpu = 4096.0 / ( 31.508 * (double) GIGA_MEM );
+  //latency_gpu = 4096.0 / ( 31.508 * (double) GIGA_MEM );
   //latency_reduction = ( 168.0 * sizeof(float) ) / ( 31.508 * (double) GIGA_MEM );
   // NVIDIA GeForce RTX 3090 GPU
-  time_gpu = ( operations / ( 35580.0 * (double) GIGA_COMP ) ) + latency_gpu + ( operations / 168.0 ) / ( ( 35580.0 / 168.0 ) * (double) GIGA_COMP );// + latency_reduction;
+  //time_gpu = ( operations / ( 35580.0 * (double) GIGA_COMP ) ) + latency_gpu + ( operations / 180.0 ) / ( ( 35580.0 / 180.0 ) * (double) GIGA_COMP );// + latency_reduction;
 
-  printf("Time CPU = %e, Time GPU = %e ->> Latency GPU = %e\n", time_cpu, time_gpu, latency_gpu);
+  // Pegasus
+  // Single precision
+  // Intel(R) Xeon(R) Platinum 8468 (2.1GHz/48 Core)
+  time_cpu = operations / ( 3225.6 * (double) GIGA_COMP ) + ( operations / 48.0 ) / ( ( 2252.0 / 48.0 ) * (double) GIGA_COMP );;
+  // PCIe 5.0
+  latency_gpu = 4096.0 / ( 63.015 * (double) GIGA_MEM );
+  // NVIDIA H100
+  time_gpu = ( operations / ( 51200.0 * (double) GIGA_COMP ) ) + latency_gpu + ( operations / 144.0 ) / ( ( 51200.0 / 144.0 ) * (double) GIGA_COMP );
 
   if ( time_cpu <= time_gpu )
   {
@@ -2554,9 +2566,6 @@ void set_arch_reduce( double operations )
     acc_set_device_type(acc_device_nvidia);
   }
 }
-
-
-
 
 int main(int argc, char *argv[]) {
   Int_t numRanks;

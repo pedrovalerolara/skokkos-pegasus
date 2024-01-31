@@ -118,8 +118,6 @@ void set_arch_reduce( double operations )
   }
 }
 
-
-
 int main( int argc, char* argv[] )
 {
 
