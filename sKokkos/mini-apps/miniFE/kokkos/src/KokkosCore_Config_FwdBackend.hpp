@@ -22,5 +22,4 @@
 
 
 #endif
-#include <fwd/Kokkos_Fwd_OPENACC.hpp>
-#include <fwd/Kokkos_Fwd_SERIAL.hpp>
+#include <fwd/Kokkos_Fwd_OPENMP.hpp>

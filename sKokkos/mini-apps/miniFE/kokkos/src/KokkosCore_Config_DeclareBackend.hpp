@@ -22,5 +22,4 @@
 
 
 #endif
-#include <decl/Kokkos_Declare_OPENACC.hpp>
-#include <decl/Kokkos_Declare_SERIAL.hpp>
+#include <decl/Kokkos_Declare_OPENMP.hpp>
