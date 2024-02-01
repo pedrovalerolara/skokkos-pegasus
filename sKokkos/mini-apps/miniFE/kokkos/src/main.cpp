@@ -201,6 +201,11 @@ int main(int argc, char** argv) {
   Kokkos::initialize(argc,argv);
   acc_set_device_type(acc_device_host);	
   //acc_set_device_type(acc_device_nvidia);	
+  
+  // We use number of non zeros elements (NNZ) for the tuning factor
+  // depending on the size of the 3D domain, there is a different NNZ
+  // I already computed those NNZ, so you can use the lines below
+ 
   //set_arch( (double) 57066625.0 ); //NNZ for 128x128x182
   //set_arch( (double) 7189057.0 ); //NNZ for 64x64x64
   set_arch( (double) 912673.0 ); //NNZ for 32x32x32
