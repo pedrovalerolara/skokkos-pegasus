@@ -2587,15 +2587,21 @@ int main(int argc, char *argv[]) {
   {
 
   //acc_set_device_type(acc_device_host);	
-  acc_set_device_type(acc_device_nvidia);	
+  //acc_set_device_type(acc_device_nvidia);
+  // It is necessary to change the opts.nx below too	
+  set_arch( (double) 32768.0 ); //size for 16x16x16
   //set_arch( (double) 32768.0 ); //size for 32x32x32
   //set_arch( (double) 262144.0 ); //size for 64x64x64
   //set_arch( (double) 2097152.0 ); //size for 128x128x128
   //set_arch( (double) 16777216.0 ); //size for 256x256x256
 
   opts.its = 9999999;
-  //opts.nx = 30;
+  // Here
   opts.nx = 16;
+  //opts.nx = 32;
+  //opts.nx = 64;
+  //opts.nx = 128;
+  //opts.nx = 256;
   opts.numReg = 11;
   opts.numFiles = (int)(numRanks + 10) / 9;
   opts.showProg = 0;

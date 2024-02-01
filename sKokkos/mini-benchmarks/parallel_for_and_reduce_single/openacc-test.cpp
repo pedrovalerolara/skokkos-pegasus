@@ -136,9 +136,9 @@ int main( int argc, char* argv[] )
   N = i;
  
   //acc_set_device_type(acc_device_nvidia);
-  acc_set_device_type(acc_device_host);
+  //acc_set_device_type(acc_device_host);
   //set_arch(2.0*M);
-  //set_arch_reduce(2.0*M);
+  set_arch_reduce(2.0*M);
 
   auto X  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * sizeof(float)));
   auto Y  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * sizeof(float)));
