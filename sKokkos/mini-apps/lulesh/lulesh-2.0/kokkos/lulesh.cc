@@ -2589,7 +2589,7 @@ int main(int argc, char *argv[]) {
   //acc_set_device_type(acc_device_host);	
   //acc_set_device_type(acc_device_nvidia);
   // It is necessary to change the opts.nx below too	
-  set_arch( (double) 32768.0 ); //size for 16x16x16
+  set_arch( (double) 4096.0 ); //size for 16x16x16
   //set_arch( (double) 32768.0 ); //size for 32x32x32
   //set_arch( (double) 262144.0 ); //size for 64x64x64
   //set_arch( (double) 2097152.0 ); //size for 128x128x128
