@@ -19,7 +19,8 @@ LINKFLAGS = -acc=gpu,multicore #-tp=pwr9
 EXE = ${EXE_NAME}.acc
 #EXE = ${EXE_NAME}.mp
 #KOKKOS_ARCH = "Volta70"
-KOKKOS_ARCH = "BDW"
+#KOKKOS_ARCH = "SPR"
+KOKKOS_ARCH = "BDW,Hopper90"
 #KOKKOS_ARCH = "Power9"
 #KOKKOS_ARCH = "Zen2"
 KOKKOS_CUDA_OPTIONS = "enable_lambda"

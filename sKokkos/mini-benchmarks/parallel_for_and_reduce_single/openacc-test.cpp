@@ -4,6 +4,16 @@
 #include <cstring>
 #include <sys/time.h>
 #include <Kokkos_Core.hpp>
+#include <openacc.h>
+
+//TEST_APP = 1 for AXPY
+//           2 for DOT
+#define TEST_APP 1
+
+//TEST_TARGET = 1 for CPU test
+//              2 for GPU test
+//              3 for autotuning
+#define TEST_TARGET 2
 
 #define GIGA_MEM 1024.0 * 1024.0 * 1024.0
 #define GIGA_COMP 1000.0 * 1000.0 * 1000.0
@@ -127,23 +137,33 @@ int main( int argc, char* argv[] )
   Kokkos::initialize( argc, argv );
   {
 
-  //for ( int i = 1000000; i < 20000000; i += 1000000 )
+  for ( int i = 1000000; i < 20000000; i += 1000000 )
   //for ( int i = 10000; i < 1000000; i += 10000 )
-  for ( int i = 1000; i < 800000; i += 2000 )
+  //for ( int i = 1000; i < 800000; i += 2000 )
   {
 
   M = i;
   N = i;
  
-  //acc_set_device_type(acc_device_nvidia);
+#if TEST_TARGET == 1
+  //printf("==> run on the host!\n");
   acc_set_device_type(acc_device_host);
-  //set_arch(2.0*M);
-  //set_arch_reduce(2.0*M);
+#elif TEST_TARGET == 2
+  //printf("==> run on the GPU!\n");
+  acc_set_device_type(acc_device_nvidia);
+#else
+  //printf("==> use autotuning!\n");
+#if TEST_APP == 1
+  set_arch(2.0*M);
+#elif TEST_APP == 2
+  set_arch_reduce(2.0*M);
+#endif
+#endif
 
   auto X  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * sizeof(float)));
   auto Y  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * sizeof(float)));
 
-  /*
+#if TEST_APP == 1
   //printf("AXPY -- kokkos parallel_for\n");
   Kokkos::parallel_for( "axpy_init", M, KOKKOS_LAMBDA ( int m )
   {
@@ -187,8 +207,9 @@ int main( int argc, char* argv[] )
   //printf( "AXPY = %d Time ( %e s )\n", M, time );
   printf( "%e\n", time );
   //printf( "%d\n", M );
-  */
+#endif
 
+#if TEST_APP == 2
   //printf("DOT Product -- Kokkos parallel_reduce\n");
   Kokkos::parallel_for( "dotproduct_init", M, KOKKOS_LAMBDA ( int m )
   {
@@ -226,6 +247,7 @@ int main( int argc, char* argv[] )
   printf( "%e\n", time );
 
   //printf("DOT Product result %2.f\n", result);
+#endif
 
   /*
   printf("Kokkos parallel_for multi-dimensional\n");
