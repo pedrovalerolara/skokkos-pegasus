@@ -8,12 +8,16 @@
 
 //TEST_APP = 1 for AXPY
 //           2 for DOT
+#if !defined(TEST_APP)
 #define TEST_APP 1
+#endif
 
 //TEST_TARGET = 1 for CPU test
 //              2 for GPU test
 //              3 for autotuning
-#define TEST_TARGET 2
+#if !defined(TEST_TARGET)
+#define TEST_TARGET 1
+#endif
 
 #define GIGA_MEM 1024.0 * 1024.0 * 1024.0
 #define GIGA_COMP 1000.0 * 1000.0 * 1000.0
@@ -134,25 +138,36 @@ int main( int argc, char* argv[] )
   int M;
   int N;
 
+#if TEST_APP == 1
+  printf("==> target app: AXPY\n");
+#elif TEST_APP == 2
+  printf("==> target app: DOT\n");
+#endif
+
+#if TEST_TARGET == 1
+  printf("==> target device: CPU\n");
+#elif TEST_TARGET == 2
+  printf("==> target device: GPU\n");
+#else
+  printf("==> target device: AUTO\n");
+#endif
+
   Kokkos::initialize( argc, argv );
   {
 
-  for ( int i = 1000000; i < 20000000; i += 1000000 )
+  //for ( int i = 1000000; i < 20000000; i += 1000000 )
   //for ( int i = 10000; i < 1000000; i += 10000 )
-  //for ( int i = 1000; i < 800000; i += 2000 )
+  for ( int i = 1000; i < 800000; i += 2000 )
   {
 
   M = i;
   N = i;
  
 #if TEST_TARGET == 1
-  //printf("==> run on the host!\n");
   acc_set_device_type(acc_device_host);
 #elif TEST_TARGET == 2
-  //printf("==> run on the GPU!\n");
   acc_set_device_type(acc_device_nvidia);
 #else
-  //printf("==> use autotuning!\n");
 #if TEST_APP == 1
   set_arch(2.0*M);
 #elif TEST_APP == 2

@@ -5,6 +5,19 @@
 #include <sys/time.h>
 #include <Kokkos_Core.hpp>
 
+//TEST_APP = 1 for AXPY
+//           2 for DOT
+#if !defined(TEST_APP)
+#define TEST_APP 1
+#endif
+
+//TEST_TARGET = 1 for CPU test
+//              2 for GPU test
+//              3 for autotuning
+#if !defined(TEST_TARGET)
+#define TEST_TARGET 1
+#endif
+
 #define GIGA_MEM 1024.0 * 1024.0 * 1024.0
 #define GIGA_COMP 1000.0 * 1000.0 * 1000.0
 
@@ -127,6 +140,20 @@ int main( int argc, char* argv[] )
   int M;
   int N;
 
+#if TEST_APP == 1
+  printf("==> target app: AXPY\n");
+#elif TEST_APP == 2
+  printf("==> target app: DOT\n");
+#endif
+
+#if TEST_TARGET == 1
+  printf("==> target device: CPU\n");
+#elif TEST_TARGET == 2
+  printf("==> target device: GPU\n");
+#else
+  printf("==> target device: AUTO\n");
+#endif
+
   Kokkos::initialize( argc, argv );
   {
   
@@ -135,10 +162,19 @@ int main( int argc, char* argv[] )
   
   M = i;
   N = i;
-  //acc_set_device_type(acc_device_nvidia);
+
+#if TEST_TARGET == 1
   acc_set_device_type(acc_device_host);
-  //set_arch(2.0*M*N);
-  //set_arch_reduce(2.0*M*N);
+#elif TEST_TARGET == 2
+  acc_set_device_type(acc_device_nvidia);
+#else
+#if TEST_APP == 1
+  set_arch(2.0*M*N);
+#elif TEST_APP == 2
+  set_arch_reduce(2.0*M*N);
+#endif
+#endif
+
  
   //auto X  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * N * sizeof(float)));
   //auto Y  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * N * sizeof(float)));
@@ -147,6 +183,7 @@ int main( int argc, char* argv[] )
 
   typedef Kokkos::MDRangePolicy< Kokkos::Rank<2> > mdrange_policy;
 
+#if TEST_APP == 1
   //printf("AXPY -- kokkos parallel_for\n");
   Kokkos::parallel_for( "axpy_init", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n )
   {
@@ -194,8 +231,9 @@ int main( int argc, char* argv[] )
   //printf( "AXPY = %d Time ( %e s )\n", M, time );
   //printf( "%d\n", M );
   printf( "%e\n", time );
+#endif
 
-  /*
+#if TEST_APP == 2
   //printf("DOT Product -- Kokkos parallel_reduce\n");
   Kokkos::parallel_for( "dotproduct_init", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n )
   {
@@ -234,10 +272,10 @@ int main( int argc, char* argv[] )
   //printf( "%d\n", M );
 
   //printf("DOT Product result %2.f\n", result);
+#endif
 
   //Kokkos::kokkos_free<>(X);
   //Kokkos::kokkos_free<>(Y);
-  */
 
   }
   

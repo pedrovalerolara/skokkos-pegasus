@@ -1,6 +1,8 @@
 KOKKOS_PATH = ../../skokkos/
-#KOKKOS_DEVICES = "OpenACC"
+KOKKOS_DEVICES = "OpenACC"
 EXE_NAME = "OpenACC"
+TEST_TARGET ?= 1
+TEST_APP ?= 1
 
 SRC = $(wildcard *.cpp)
 
@@ -10,17 +12,31 @@ default: build
 CXX = nvc++ 
 #CXX = g++ 
 #CXXFLAGS = -O3 #-acc=gpu,multicore #-tp=pwr9
-CXXFLAGS = -O3 -acc=gpu,multicore #-tp=pwr9
+CXXFLAGS = -O3 -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP}
 #CXXFLAGS = -O3 -Minfo=acc -acc
 #CXXFLAGS = -O3 -Minfo=acc -acc -gpu=keep
 LINK = ${CXX}
-LINKFLAGS = -acc=gpu,multicore #-tp=pwr9
 #LINKFLAGS = -acc=gpu,multicore #-tp=pwr9
-EXE = ${EXE_NAME}.acc
-#EXE = ${EXE_NAME}.mp
+LINKFLAGS = -O3 -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP} 
+#LINKFLAGS = -acc=gpu,multicore #-tp=pwr9
+ifeq ($(TEST_TARGET),1)
+TARGET_DEVICE=cpu
+else ifeq ($(TEST_TARGET),2)
+TARGET_DEVICE=gpu
+else
+TARGET_DEVICE=auto
+endif
+ifeq ($(TEST_APP),1)
+APP=axpy
+else ifeq ($(TEST_APP),2)
+APP=dot
+endif
+EXE = ${EXE_NAME}.${APP}.${TARGET_DEVICE}
 #KOKKOS_ARCH = "Volta70"
 #KOKKOS_ARCH = "Power9"
-KOKKOS_ARCH = "BDW"
+#KOKKOS_ARCH = "SPR"
+KOKKOS_ARCH = "BDW,Hopper90"
+#KOKKOS_ARCH = "HSW,Volta70"
 #KOKKOS_ARCH = "Zen2"
 KOKKOS_CUDA_OPTIONS = "enable_lambda"
 
@@ -37,7 +53,10 @@ $(EXE): $(OBJ) $(KOKKOS_LINK_DEPENDS)
 	$(LINK) $(KOKKOS_LDFLAGS) $(LINKFLAGS) $(EXTRA_PATH) $(OBJ) $(KOKKOS_LIBS) $(LIB) -o $(EXE)
 
 clean: kokkos-clean
-	rm -f *.o *.cuda *.acc *.host
+	rm -f *.o 
+
+purge: clean
+	rm -f *.cpu *.gpu *.auto
 
 # Compilation rules
 
