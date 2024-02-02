@@ -13,6 +13,16 @@
 
 #include "lulesh.h"
 
+//TEST_TARGET = 1 for CPU test
+//              2 for GPU test
+//              3 for autotuning
+#if !defined(TEST_TARGET)
+#define TEST_TARGET 1
+#endif
+#if !defined(TEST_SIZE)
+#define TEST_SIZE 16
+#endif
+
 #define HP_IMPLEMENTATION_OPTION 1
 // HP_IMPLEMENTATION_OPTION = 0 //Use original hierarchical parallel implementation.
 // HP_IMPLEMENTATION_OPTION = 1 //Use a single-level parallel_for()
@@ -2572,6 +2582,14 @@ int main(int argc, char *argv[]) {
   Int_t myRank;
   struct cmdLineOpts opts;
 
+#if TEST_TARGET == 1
+  //printf("==> target device: CPU\n");
+#elif TEST_TARGET == 2
+  //printf("==> target device: GPU\n");
+#else
+  //printf("==> target device: AUTO\n");
+#endif
+
 #if USE_MPI
   Domain_member fieldData;
 
@@ -2586,22 +2604,33 @@ int main(int argc, char *argv[]) {
   Kokkos::initialize();
   {
 
-  //acc_set_device_type(acc_device_host);	
-  //acc_set_device_type(acc_device_nvidia);
-  // It is necessary to change the opts.nx below too	
+#if TEST_TARGET == 1
+  acc_set_device_type(acc_device_host);
+#elif TEST_TARGET == 2
+  acc_set_device_type(acc_device_nvidia);
+#else
+#if TEST_SIZE == 16
   set_arch( (double) 4096.0 ); //size for 16x16x16
-  //set_arch( (double) 32768.0 ); //size for 32x32x32
-  //set_arch( (double) 262144.0 ); //size for 64x64x64
-  //set_arch( (double) 2097152.0 ); //size for 128x128x128
-  //set_arch( (double) 16777216.0 ); //size for 256x256x256
+  opts.nx = 16;
+#elif TEST_SIZE == 32
+  set_arch( (double) 32768.0 ); //size for 32x32x32
+  opts.nx = 32;
+#elif TEST_SIZE == 64
+  set_arch( (double) 262144.0 ); //size for 64x64x64
+  opts.nx = 64;
+#elif TEST_SIZE == 128
+  set_arch( (double) 2097152.0 ); //size for 128x128x128
+  opts.nx = 128;
+#elif TEST_SIZE == 128
+  set_arch( (double) 16777216.0 ); //size for 256x256x256
+  opts.nx = 256;
+#else
+  printf("==> [ERROR] unknown TEST_SIZE value: %d\n", TEST_SIZE);
+  return 0;
+#endif
+#endif
 
   opts.its = 9999999;
-  // Here
-  opts.nx = 16;
-  //opts.nx = 32;
-  //opts.nx = 64;
-  //opts.nx = 128;
-  //opts.nx = 256;
   opts.numReg = 11;
   opts.numFiles = (int)(numRanks + 10) / 9;
   opts.showProg = 0;

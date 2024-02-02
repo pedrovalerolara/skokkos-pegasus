@@ -53,6 +53,16 @@
 #include <miniFE_no_info.hpp>
 #endif
 
+//TEST_TARGET = 1 for CPU test
+//              2 for GPU test
+//              3 for autotuning
+#if !defined(TEST_TARGET)
+#define TEST_TARGET 1
+#endif
+#if !defined(TEST_SIZE)
+#define TEST_SIZE 16
+#endif
+
 //The following macros should be specified as compile-macros in the
 //makefile. They are defaulted here just in case...
 #ifndef MINIFE_SCALAR
@@ -189,6 +199,13 @@ void set_arch_reduce( double operations )
 }
 
 int main(int argc, char** argv) {
+#if TEST_TARGET == 1
+  //printf("==> target device: CPU\n");
+#elif TEST_TARGET == 2
+  //printf("==> target device: GPU\n");
+#else
+  //printf("==> target device: AUTO\n");
+#endif
   
   miniFE::Parameters params;
   miniFE::get_parameters(argc, argv, params);
@@ -199,17 +216,28 @@ int main(int argc, char** argv) {
   miniFE::initialize_mpi(argc, argv, numprocs, myproc);
 
   Kokkos::initialize(argc,argv);
-  acc_set_device_type(acc_device_host);	
-  //acc_set_device_type(acc_device_nvidia);	
   
   // We use number of non zeros elements (NNZ) for the tuning factor
   // depending on the size of the 3D domain, there is a different NNZ
   // I already computed those NNZ, so you can use the lines below
- 
-  //set_arch( (double) 57066625.0 ); //NNZ for 128x128x182
-  //set_arch( (double) 7189057.0 ); //NNZ for 64x64x64
+#if TEST_TARGET == 1
+  acc_set_device_type(acc_device_host);
+#elif TEST_TARGET == 2
+  acc_set_device_type(acc_device_nvidia);
+#else
+#if TEST_SIZE == 16
+  set_arch( (double) 117649.0 ); //NNZ for 16x16x16
+#elif TEST_SIZE == 32
   set_arch( (double) 912673.0 ); //NNZ for 32x32x32
-  //set_arch( (double) 117649.0 ); //NNZ for 16x16x16
+#elif TEST_SIZE == 64
+  set_arch( (double) 7189057.0 ); //NNZ for 64x64x64
+#elif TEST_SIZE == 128
+  set_arch( (double) 57066625.0 ); //NNZ for 128x128x182
+#else
+  printf("==> [ERROR] unknown TEST_SIZE value: %d\n", TEST_SIZE);
+  return 0;
+#endif
+#endif
   
   /*
  

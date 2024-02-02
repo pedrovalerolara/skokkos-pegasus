@@ -5,6 +5,18 @@ CXX = mpicxx
 CC = mpicc
 LINK = mpicxx 
 
+TEST_TARGET ?= 1
+TEST_SIZE ?= 16
+
+ifeq ($(TEST_TARGET),1)
+TARGET_DEVICE=cpu
+else ifeq ($(TEST_TARGET),2)
+TARGET_DEVICE=gpu
+else
+TARGET_DEVICE=auto
+endif
+
+
 # Kokkos Settings:
 
 KOKKOS_DEVICES = OpenMP
@@ -19,11 +31,16 @@ endif
 ifeq ($(TARGET),OpenACC)
 TARGET=OpenACC
 KOKKOS_DEVICES = "OpenACC"
-EXE=miniFE.openacc
+ifeq ($(TEST_TARGET),3)
+EXE=miniFE.openacc.$(TARGET_DEVICE).s$(TEST_SIZE)
+else
+EXE=miniFE.openacc.$(TARGET_DEVICE)
+endif
 endif
 
 #KOKKOS_DEVICES = "OpenMP"
-KOKKOS_ARCH = "Volta70"
+#KOKKOS_ARCH = "Volta70"
+KOKKOS_ARCH = "BDW,Hopper90"
 KOKKOS_CUDA_OPTIONS = enable_lambda
 
 
@@ -76,7 +93,8 @@ CXXFLAGS += -acc=gpu,multicore
 LINK = ${CXX} -acc=gpu,multicore
 LDFLAGS = -O3    -acc=gpu,multicore
 #KOKKOS_ARCH = "BDW"
-KOKKOS_ARCH = "Zen2"
+#KOKKOS_ARCH = "Zen2"
+KOKKOS_ARCH = "BDW,Hopper90"
 endif
 
 all:generate_info $(EXE)

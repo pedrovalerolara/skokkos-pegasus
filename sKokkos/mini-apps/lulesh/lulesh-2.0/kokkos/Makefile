@@ -1,17 +1,22 @@
 #Set your Kokkos path to something appropriate
-KOKKOS_PATH = $(KOKKOS_ROOT)
+KOKKOS_PATH = ../../../../skokkos/
 KOKKOS_DEVICES ?= "OpenACC"
 #KOKKOS_ARCH = "Volta70"
 #KOKKOS_ARCH = "BDW"
-KOKKOS_ARCH = "Zen2"
+#KOKKOS_ARCH = "Zen2"
+KOKKOS_ARCH = "BDW,Hopper90"
 KOKKOS_CUDA_OPTIONS = enable_lambda
 KOKKOS_OPTIONS = disable_desul_atomics
+TEST_TARGET ?= 1
+TEST_SIZE ?= 16
+
 SRC = $(wildcard *.cc)
 
 default: build
 	echo "Start Build"
 	
-CXXFLAGS = -g -O3 -acc=gpu,multicore -DUSE_OMP=1 -DRAJA_USE_GETTIME -I./includes -I./ 
+#CXXFLAGS = -g -O3 -acc=gpu,multicore -DUSE_OMP=1 -DRAJA_USE_GETTIME -I./includes -I./ 
+CXXFLAGS = -O3 -DUSE_OMP=1 -DRAJA_USE_GETTIME -I./includes -I./ -DTEST_TARGET=${TEST_TARGET} -DTEST_SIZE=${TEST_SIZE}
 
 ifeq ( $(USE_MPI), yes) 
 CXX = mpicxx
@@ -25,7 +30,18 @@ endif
 LINK = ${CXX}
 
 LINKFLAGS =  
-EXE = lulesh.kk.${KOKKOS_DEVICES}
+ifeq ($(TEST_TARGET),1)
+TARGET_DEVICE=cpu
+else ifeq ($(TEST_TARGET),2)
+TARGET_DEVICE=gpu
+else
+TARGET_DEVICE=auto
+endif
+ifeq ($(TEST_TARGET),3)
+EXE = lulesh.kk.${TARGET_DEVICE}.s${TEST_SIZE}
+else
+EXE = lulesh.kk.${TARGET_DEVICE}
+endif
 
 DEPFLAGS = -M
 
