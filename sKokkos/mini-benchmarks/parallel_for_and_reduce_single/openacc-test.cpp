@@ -139,17 +139,17 @@ int main( int argc, char* argv[] )
   int N;
 
 #if TEST_APP == 1
-  printf("==> target app: AXPY\n");
+  //printf("==> target app: AXPY\n");
 #elif TEST_APP == 2
-  printf("==> target app: DOT\n");
+  //printf("==> target app: DOT\n");
 #endif
 
 #if TEST_TARGET == 1
-  printf("==> target device: CPU\n");
+  //printf("==> target device: CPU\n");
 #elif TEST_TARGET == 2
-  printf("==> target device: GPU\n");
+  //printf("==> target device: GPU\n");
 #else
-  printf("==> target device: AUTO\n");
+  //printf("==> target device: AUTO\n");
 #endif
 
   Kokkos::initialize( argc, argv );
