@@ -175,9 +175,6 @@ int main( int argc, char* argv[] )
 #endif
 #endif
 
- 
-  //auto X  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * N * sizeof(float)));
-  //auto Y  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * N * sizeof(float)));
   Kokkos::View<double**, Kokkos::LayoutRight> X("X", M , N);
   Kokkos::View<double**, Kokkos::LayoutRight> Y("Y", M , N);
 
@@ -187,11 +184,8 @@ int main( int argc, char* argv[] )
   //printf("AXPY -- kokkos parallel_for\n");
   Kokkos::parallel_for( "axpy_init", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n )
   {
-    //X[m * N + n] = 2.0;
-    //Y[m * N + n] = 2.0;
     X(m, n) = 2.0;
     Y(m, n) = 2.0;
-    //printf("X[%d] = %2.f and Y[%d] = %2.f\n", m, X[m], m, Y[m]);
   });
 
   Kokkos::fence();
@@ -200,9 +194,7 @@ int main( int argc, char* argv[] )
   Kokkos::parallel_for( "axpy_comp", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n )
   {
     float alpha = 2.0;
-    //Y[m * N + n] += alpha * X[m * N + n];
     Y(m, n) += alpha * X(m, n);
-    //printf("Y[%d] = %2.f\n", m, Y[m]);
   });
   
   Kokkos::fence();
@@ -215,9 +207,7 @@ int main( int argc, char* argv[] )
   Kokkos::parallel_for( "axpy_comp", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n )
   {
     float alpha = 2.0;
-    //Y[m * N + n] += alpha * X[m * N + n];
     Y(m, n) += alpha * X(m, n);
-    //printf("Y[%d] = %2.f\n", m, Y[m]);
   });
  
   Kokkos::fence();
@@ -237,9 +227,8 @@ int main( int argc, char* argv[] )
   //printf("DOT Product -- Kokkos parallel_reduce\n");
   Kokkos::parallel_for( "dotproduct_init", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n )
   {
-    X[m * N + n] = 2.0;
-    Y[m * N + n] = 2.0;
-    //printf("X[%d] = %2.f and Y[%d] = %2.f\n", m, X[m], m, Y[m]);
+    X(m,n) = 2.0;
+    Y(m,n) = 2.0;
   });
 
   float result;
@@ -247,7 +236,7 @@ int main( int argc, char* argv[] )
   //Warming
   Kokkos::parallel_reduce( "dotproduct_comp", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n, float &update )
   {
-    update += X[m * N + n] * Y[m * N + n];
+    update += X(m,n) * Y(m,n);
   }, result );
  
   //Time
@@ -256,7 +245,7 @@ int main( int argc, char* argv[] )
   { 
   Kokkos::parallel_reduce( "dotproduct_comp", mdrange_policy( {0, 0}, {M, N}), KOKKOS_LAMBDA ( int m, int n, float &update )
   {
-    update += X[m * N + n] * Y[m * N + n];
+    update += X(m,n) * Y(m,n);
   }, result );
  
   Kokkos::fence();
