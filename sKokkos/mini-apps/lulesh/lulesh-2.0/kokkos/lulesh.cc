@@ -2621,7 +2621,7 @@ int main(int argc, char *argv[]) {
 #elif TEST_SIZE == 128
   set_arch( (double) 2097152.0 ); //size for 128x128x128
   opts.nx = 128;
-#elif TEST_SIZE == 128
+#elif TEST_SIZE == 256
   set_arch( (double) 16777216.0 ); //size for 256x256x256
   opts.nx = 256;
 #else
