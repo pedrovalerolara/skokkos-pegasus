@@ -1,6 +1,14 @@
 KOKKOS_PATH = ../../skokkos/
-#KOKKOS_DEVICES = "OpenACC"
+KOKKOS_DEVICES = "OpenACC"
 EXE_NAME = "OpenACC"
+TEST_TARGET ?= 1
+ifeq ($(TEST_TARGET),1)
+TARGET_DEVICE=cpu
+else ifeq ($(TEST_TARGET),2)
+TARGET_DEVICE=gpu
+else
+TARGET_DEVICE=auto
+endif
 
 SRC = $(wildcard *.cpp)
 
@@ -9,19 +17,20 @@ default: build
 
 CXX = nvc++ 
 #CXX = g++ 
-#CXXFLAGS = -O3 #-acc=gpu,multicore #-tp=pwr9
-CXXFLAGS = -O3 -acc=gpu,multicore #-tp=pwr9
+CXXFLAGS = -O3 -DTEST_TARGET=${TEST_TARGET}
+#CXXFLAGS = -O3 -acc=gpu,multicore #-tp=pwr9
 #CXXFLAGS = -O3 -Minfo=acc -acc
 #CXXFLAGS = -O3 -Minfo=acc -acc -gpu=keep
 LINK = ${CXX}
-LINKFLAGS = -acc=gpu,multicore #-tp=pwr9
+LINKFLAGS = -O3 -DTEST_TARGET=${TEST_TARGET}
 #LINKFLAGS = -acc=gpu,multicore #-tp=pwr9
-EXE = ${EXE_NAME}.acc
+EXE = ${EXE_NAME}.acc.${TARGET_DEVICE}
 #EXE = ${EXE_NAME}.mp
 #KOKKOS_ARCH = "Volta70"
 #KOKKOS_ARCH = "BDW"
 #KOKKOS_ARCH = "Power9"
-KOKKOS_ARCH = "Zen2"
+#KOKKOS_ARCH = "Zen2"
+KOKKOS_ARCH = "BDW,Hopper90"
 KOKKOS_CUDA_OPTIONS = "enable_lambda"
 
 DEPFLAGS = -M

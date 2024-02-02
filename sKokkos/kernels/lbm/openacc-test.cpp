@@ -6,6 +6,13 @@
 #include <Kokkos_Core.hpp>
 #include <cmath>
 
+//TEST_TARGET = 1 for CPU test
+//              2 for GPU test
+//              3 for autotuning
+#if !defined(TEST_TARGET)
+#define TEST_TARGET 1
+#endif
+
 #define GIGA_MEM 1024.0 * 1024.0 * 1024.0
 #define GIGA_COMP 1000.0 * 1000.0 * 1000.0
 #define SIZE 160
@@ -125,15 +132,27 @@ int main( int argc, char* argv[] )
   int M;
   int N;
 
+#if TEST_TARGET == 1
+  //printf("==> target device: CPU\n");
+#elif TEST_TARGET == 2
+  //printf("==> target device: GPU\n");
+#else
+  //printf("==> target device: AUTO\n");
+#endif
+
   Kokkos::initialize( argc, argv );
   {
 
   M = SIZE;
   N = SIZE;
  
-  set_arch(M*N*335.0);
+#if TEST_TARGET == 1
+  acc_set_device_type(acc_device_host);
+#elif TEST_TARGET == 2
   acc_set_device_type(acc_device_nvidia);
-  //acc_set_device_type(acc_device_host);
+#else
+  set_arch(M*N*335.0);
+#endif
 
   auto f1  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * N * 9 * sizeof(float)));
   auto f2  = static_cast<float*>(Kokkos::kokkos_malloc<>(M * N * 9 * sizeof(float)));
