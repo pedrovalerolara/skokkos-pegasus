@@ -12,11 +12,11 @@ default: build
 CXX = nvc++ 
 #CXX = g++ 
 #CXXFLAGS = -O3 #-acc=gpu,multicore #-tp=pwr9
-CXXFLAGS = -O3 -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP}
+CXXFLAGS = -O3 -acc=gpu,multicore -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP}
 #CXXFLAGS = -O3 -Minfo=acc -acc
 #CXXFLAGS = -O3 -Minfo=acc -acc -gpu=keep
 LINK = ${CXX}
-LINKFLAGS = -O3 -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP}
+LINKFLAGS = -O3 -acc=gpu,multicore -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP}
 #LINKFLAGS = -acc=gpu,multicore #-tp=pwr9
 ifeq ($(TEST_TARGET),1)
 TARGET_DEVICE=cpu

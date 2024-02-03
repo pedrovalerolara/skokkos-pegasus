@@ -19,6 +19,10 @@
 #define TEST_TARGET 1
 #endif
 
+#define DSIZE_LB 1000
+#define DSIZE_UB 800000
+#define DSTEP 2000
+
 #define GIGA_MEM 1024.0 * 1024.0 * 1024.0
 #define GIGA_COMP 1000.0 * 1000.0 * 1000.0
 
@@ -155,9 +159,7 @@ int main( int argc, char* argv[] )
   Kokkos::initialize( argc, argv );
   {
 
-  //for ( int i = 1000000; i < 20000000; i += 1000000 )
-  //for ( int i = 10000; i < 1000000; i += 10000 )
-  for ( int i = 1000; i < 800000; i += 2000 )
+  for ( int i = DSIZE_LB; i <= DSIZE_UB; i += DSTEP )
   {
 
   M = i;

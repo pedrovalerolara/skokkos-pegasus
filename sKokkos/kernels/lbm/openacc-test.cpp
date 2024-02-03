@@ -15,7 +15,9 @@
 
 #define GIGA_MEM 1024.0 * 1024.0 * 1024.0
 #define GIGA_COMP 1000.0 * 1000.0 * 1000.0
+#if !defined(SIZE)
 #define SIZE 160
+#endif
 
 void set_arch( double operations );
 void set_arch_reduce( double operations );
