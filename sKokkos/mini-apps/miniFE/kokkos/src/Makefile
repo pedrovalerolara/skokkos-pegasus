@@ -69,7 +69,7 @@ MAKEFILE_PATH := $(subst Makefile,,$(abspath $(lastword $(MAKEFILE_LIST))))
 
 MINIFE_PATH = ${MAKEFILE_PATH}..
 
-KOKKOS_PATH ?= $(KOKKOS_ROOT)
+KOKKOS_PATH ?= ../../../../skokkos/
 KOKKOS_PATH_INC ?= ${KOKKOS_PATH}
 
 
@@ -85,13 +85,12 @@ endif
 ifeq ($(TARGET),OpenACC)
 #CXXFLAGS = -O3  -acc -DKOKKOS_FAST_COMPILE
 #CXXFLAGS = -O3  -acc 
-CXXFLAGS = -O3 -acc=gpu,multicore
+CXXFLAGS = -O3 -acc=gpu,multicore -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP}
 CXXFLAGS += -DUSE_MPI=0
 CXX = nvc++
 CC = nvc++
-CXXFLAGS += -acc=gpu,multicore
-LINK = ${CXX} -acc=gpu,multicore
-LDFLAGS = -O3    -acc=gpu,multicore
+LINK = ${CXX}
+LDFLAGS = -O3    -acc=gpu,multicore -DTEST_TARGET=${TEST_TARGET} -DTEST_APP=${TEST_APP}
 #KOKKOS_ARCH = "BDW"
 #KOKKOS_ARCH = "Zen2"
 KOKKOS_ARCH = "BDW,Hopper90"
@@ -142,7 +141,7 @@ $(EXE): $(OBJ) $(KOKKOS_LINK_DEPENDS) generate_info $(HEADERS)
 test:
 	./run_test x
 
-clean:
+clean: kokkos-clean
 	rm -rf *.o *.a miniFE.x *.linkinfo miniFE_info.hpp Obj
 
 realclean: clean

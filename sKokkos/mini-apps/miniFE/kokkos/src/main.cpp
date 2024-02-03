@@ -239,8 +239,6 @@ int main(int argc, char** argv) {
 #endif
 #endif
   
-  /*
- 
   // MGT
   void initTimeProbes();
   initTimeProbes();
@@ -321,7 +319,6 @@ int main(int argc, char** argv) {
   miniFE::finalize_mpi();
 
   return return_code;
-  */
 }
 
 void add_params_to_yaml(YAML_Doc& doc, miniFE::Parameters& params)

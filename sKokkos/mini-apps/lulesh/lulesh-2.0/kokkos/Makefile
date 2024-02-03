@@ -16,7 +16,7 @@ default: build
 	echo "Start Build"
 	
 #CXXFLAGS = -g -O3 -acc=gpu,multicore -DUSE_OMP=1 -DRAJA_USE_GETTIME -I./includes -I./ 
-CXXFLAGS = -O3 -DUSE_OMP=1 -DRAJA_USE_GETTIME -I./includes -I./ -DTEST_TARGET=${TEST_TARGET} -DTEST_SIZE=${TEST_SIZE}
+CXXFLAGS = -O3 -acc=gpu,multicore -DUSE_OMP=1 -DRAJA_USE_GETTIME -I./includes -I./ -DTEST_TARGET=${TEST_TARGET} -DTEST_SIZE=${TEST_SIZE}
 
 ifeq ( $(USE_MPI), yes) 
 CXX = mpicxx
