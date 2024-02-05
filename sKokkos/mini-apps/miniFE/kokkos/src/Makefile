@@ -142,7 +142,7 @@ test:
 	./run_test x
 
 clean: kokkos-clean
-	rm -rf *.o *.a miniFE.x *.linkinfo miniFE_info.hpp Obj
+	rm -rf *.o *.a miniFE.x *.linkinfo miniFE_info.hpp Obj desul
 
 realclean: clean
 	rm -f gmon.out gprof.* *~ *.yaml *.TVD.* *.mtx* *.vec* minife_debug*

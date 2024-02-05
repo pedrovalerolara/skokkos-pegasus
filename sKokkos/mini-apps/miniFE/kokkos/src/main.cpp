@@ -124,7 +124,8 @@ void set_arch( double operations )
   // Intel(R) Xeon(R) Platinum 8468 (2.1GHz/48 Core)
   time_cpu = operations / ( 3225.6 * (double) GIGA_COMP );
   // PCIe 5.0
-  latency_gpu = 4096.0 / ( 63.015 * (double) GIGA_MEM );
+  //latency_gpu = 4096.0 / ( 63.015 * (double) GIGA_MEM );
+  latency_gpu = 32768.0 / ( 63.015 * (double) GIGA_MEM );
   // NVIDIA H100
   time_gpu = ( operations / ( 51200.0 * (double) GIGA_COMP ) ) + latency_gpu;
 
@@ -184,7 +185,8 @@ void set_arch_reduce( double operations )
   // Intel(R) Xeon(R) Platinum 8468 (2.1GHz/48 Core)
   time_cpu = operations / ( 3225.6 * (double) GIGA_COMP ) + ( operations / 48.0 ) / ( ( 2252.0 / 48.0 ) * (double) GIGA_COMP );;
   // PCIe 5.0
-  latency_gpu = 4096.0 / ( 63.015 * (double) GIGA_MEM );
+  //latency_gpu = 4096.0 / ( 63.015 * (double) GIGA_MEM );
+  latency_gpu = 16384.0 / ( 63.015 * (double) GIGA_MEM );
   // NVIDIA H100
   time_gpu = ( operations / ( 51200.0 * (double) GIGA_COMP ) ) + latency_gpu + ( operations / 144.0 ) / ( ( 51200.0 / 144.0 ) * (double) GIGA_COMP );
 
